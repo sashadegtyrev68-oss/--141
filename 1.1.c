@@ -35,7 +35,7 @@ int main()
 
 double GetA(const double x, const double y, const double z)
 {
-	return (double) y * z * pow(x, 2) - z / pow(sin(x / z), 2);
+	return y * z * pow(x, 2) - z / pow(sin(x / z), 2);
 }
 
 double GetB(const double x, const double y, const double z)
