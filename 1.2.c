@@ -53,7 +53,8 @@ int main()
     c_tri = getValue();
 
     // Проверка существования треугольника
-    if (!isTriangleValid(a_tri, b_tri, c_tri)) {
+    if (!isTriangleValid(a_tri, b_tri, c_tri)) 
+    {
         printf("Ошибка: Треугольник с такими сторонами не существует.\n");
         return 1;
     }
@@ -88,11 +89,13 @@ double triangleArea(const double a, const double b, const double c)
 int isTriangleValid(const double a, const double b, const double c)
 {
     // Проверка на положительные значения
-    if (a <= 0.0 || b <= 0.0 || c <= 0.0) {
+    if (a <= 0.0 || b <= 0.0 || c <= 0.0) 
+    {
         return 0; 
     }
     // Классическое неравенство треугольника
-    if (a + b <= c || a + c <= b || b + c <= a) {
+    if (a + b <= c || a + c <= b || b + c <= a) 
+    {
         return 0; 
     }
     return 1; 
