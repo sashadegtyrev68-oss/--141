@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <stdbool.h>
 
 /**
  * @brief вычисляет время нагревания проволоки по закону Джоуля-Ленца
@@ -11,25 +12,34 @@
 double heatingTime(const double R, const double I, const double Q_kJ);
 
 /**
+ * @brief запрашивает у пользователя значение double
+ * @param prompt - текст приглашения
+ * @return введенное значение
+ */
+double getInputValue(const char* prompt);
+
+/**
+ * @brief проверяет корректность входных данных
+ * @param R - сопротивление проволоки, Ом
+ * @param I - сила тока, А
+ * @param Q_kJ - количество теплоты, кДж
+ * @return true, если данные корректны, иначе false
+ */
+bool validateInput(const double R, const double I, const double Q_kJ);
+
+/**
  * @brief точка входа в программу
  * @return 0, если программа выполнена корректно, иначе не 0
  */
 int main()
 {
-    double R, I, Q_kJ;
+    double R = 0.0, I = 0.0, Q_kJ = 0.0;
 
-    // Ввод данных пользователем
-    printf("Введите сопротивление проволоки R (Ом): ");
-    scanf("%lf", &R);
+    R = getInputValue("Введите сопротивление проволоки R (Ом): ");
+    I = getInputValue("Введите силу тока I (А): ");
+    Q_kJ = getInputValue("Введите количество теплоты Q (кДж): ");
 
-    printf("Введите силу тока I (А): ");
-    scanf("%lf", &I);
-
-    printf("Введите количество теплоты Q (кДж): ");
-    scanf("%lf", &Q_kJ);
-
-    // Проверка корректности входных данных (исключаем деление на ноль и отрицательные значения)
-    if (R <= 0 || I == 0 || Q_kJ < 0) 
+    if (!validateInput(R, I, Q_kJ))
     {
         printf("Ошибка: некорректные входные данные.\n");
         return 1;
@@ -45,10 +55,29 @@ int main()
 }
 
 /**
- * @brief реализация вычисления времени по закону Джоуля-Ленца
+ * @brief Вычисление времени по закону Джоуля-Ленца
  */
 double heatingTime(const double R, const double I, const double Q_kJ)
 {
     const double Q_J = Q_kJ * 1000.0;      
     return Q_J / (pow(I, 2) * R);           
+}
+
+/**
+ * @brief Ввод значения
+ */
+double getInputValue(const char* prompt)
+{
+    double value = 0.0;
+    printf("%s", prompt);
+    scanf("%lf", &value);
+    return value;
+}
+
+/**
+ * @brief Проверка входных данных
+ */
+bool validateInput(const double R, const double I, const double Q_kJ)
+{
+    return (R > 0 && I != 0 && Q_kJ >= 0);
 }
