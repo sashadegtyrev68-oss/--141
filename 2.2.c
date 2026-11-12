@@ -30,7 +30,8 @@ int main()
     x = getValue("Введите значение x: ");
 
     // Проверка: при x < 4 нельзя делить на ноль
-    if (x < 4.0 && x == 0.0) {
+    if (x < 4.0 && x == 0.0) 
+    {
         printf("Ошибка: при x < 4 деление на ноль невозможно.\n");
         return 1;
     }
@@ -53,9 +54,11 @@ int main()
  */
 double computeY(const double x, const double a)
 {
-    if (x < 4.0) {
+    if (x < 4.0) 
+    {
         return a / x + pow(x, 2);
-    } else {
+    } else 
+    {
         return a * x + pow(x, 3);
     }
 }
