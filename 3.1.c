@@ -31,11 +31,13 @@ int main()
     step    = getValue("Введите шаг табуляции (dx): ");
 
     // Проверка корректности ввода
-    if (step <= 0.0) {
+    if (step <= 0.0) 
+    {
         printf("Ошибка: шаг должен быть положительным числом.\n");
         return 1;
     }
-    if (x_start > x_end) {
+    if (x_start > x_end) 
+    {
         printf("Ошибка: начало интервала не может быть больше конца.\n");
         return 1;
     }
@@ -46,13 +48,16 @@ int main()
 
     // Цикл табуляции
     x = x_start;
-    while (x <= x_end) {
+    while (x <= x_end) 
+    {
         denominator = 3.0 + sin(3.6 * x);
 
         // Проверка знаменателя на ноль (по заданию)
-        if (denominator == 0.0) {
+        if (denominator == 0.0) 
+        {
             printf("%10.4f   нет решения\n", x);
-        } else {
+        } else 
+        {
             y = computeY(x);
             printf("%10.4f   %10.4f\n", x, y);
         }
