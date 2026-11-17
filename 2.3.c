@@ -21,19 +21,17 @@ int isTriangleValid(const double a, const double b, const double c);
  * @param a - длина первой стороны
  * @param b - длина второй стороны
  * @param c - длина третьей стороны
- * @param hypotenuse - указатель на переменную для хранения длины гипотенузы
- * @return 1 если треугольник прямоугольный, 0 иначе
+ * @return длина гипотенузы, если треугольник прямоугольный, иначе 0.0
  */
-int isRightTriangle(const double a, const double b, const double c, double* hypotenuse);
+double isRightTriangle(const double a, const double b, const double c);
 
 /**
  * @brief точка входа в программу
  * @return 0, если программа выполнена корректно
  */
-int main()
+int main(void)
 {
     double a = 0.0, b = 0.0, c = 0.0;
-    double hypotenuse = 0.0;
 
     // Ввод данных пользователем
     a = getValue("Введите сторону a: ");
@@ -54,13 +52,16 @@ int main()
         return 1;
     }
 
-    // Проверка на прямоугольность
-    if (isRightTriangle(a, b, c, &hypotenuse)) 
+    // Проверка на прямоугольность: функция возвращает гипотенузу напрямую
+    double hypotenuse = isRightTriangle(a, b, c);
+
+    if (hypotenuse > 0.0) 
     {
         printf("\n--- Результат ---\n");
         printf("Треугольник является прямоугольным.\n");
         printf("Гипотенуза равна: %lf\n", hypotenuse);
-    } else 
+    } 
+    else 
     {
         printf("\n--- Результат ---\n");
         printf("Треугольник НЕ является прямоугольным.\n");
@@ -70,13 +71,35 @@ int main()
 }
 
 /**
- * @brief считывание значения с клавиатуры
+ * @brief считывание значения с клавиатуры с проверкой ввода
  */
 double getValue(const char* prompt)
 {
+    // Проверка, что пришёл непустой указатель
+    if (prompt == NULL) 
+    {
+        printf("Ошибка: некорректное сообщение (NULL-указатель).\n");
+        return 0.0;
+    }
+
     double value = 0.0;
     printf("%s", prompt);
-    scanf("%lf", &value);
+
+    // Проверка ввода: повторяем, пока не будет введено корректное число
+    while (scanf("%lf", &value) != 1) 
+    {
+        printf("Некорректный ввод, ожидалось число.\n");
+        
+        // Очистка буфера ввода
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) 
+        {
+            /* пусто */
+        }
+        
+        printf("%s", prompt);
+    }
+
     return value;
 }
 
@@ -95,32 +118,31 @@ int isTriangleValid(const double a, const double b, const double c)
 /**
  * @brief определение прямоугольности треугольника по теореме Пифагора
  */
-int isRightTriangle(const double a, const double b, const double c, double* hypotenuse)
+double isRightTriangle(const double a, const double b, const double c)
 {
     /* Находим максимальную сторону (она будет гипотенузой) */
-    double maxSide = a;
-    if (b > maxSide) maxSide = b;
-    if (c > maxSide) maxSide = c;
+    double hyp = a;
+    double leg1 = b;
+    double leg2 = c;
 
-    /* Вычисляем сумму квадратов двух других сторон */
-    double sumOfSquares = 0.0;
-    if (a == maxSide) 
+    if (b >= a && b >= c) 
     {
-        sumOfSquares = b * b + c * c;
-    } else if (b == maxSide) 
+        hyp = b;
+        leg1 = a;
+        leg2 = c;
+    } 
+    else if (c >= a && c >= b) 
     {
-        sumOfSquares = a * a + c * c;
-    } else 
-    {
-        sumOfSquares = a * a + b * b;
+        hyp = c;
+        leg1 = a;
+        leg2 = b;
     }
 
     /* Прямое сравнение по теореме Пифагора */
-    if (sumOfSquares == maxSide * maxSide) 
+    if (leg1 * leg1 + leg2 * leg2 == hyp * hyp) 
     {
-        *hypotenuse = maxSide;
-        return 1;
+        return hyp;
     }
 
-    return 0;
+    return 0.0;
 }
