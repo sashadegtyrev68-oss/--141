@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <math.h>
 
+#define EPS 1e-6
+
 /**
  * @brief вычисляет значение функции y = x - 1/(3 + sin(3.6*x))
  * @param x - значение аргумента
@@ -19,24 +21,20 @@ double getValue(const char* prompt);
  * @brief точка входа в программу
  * @return 0, если программа выполнена корректно
  */
-int main()
+int main(void)
 {
-    double x_start = 0.0, x_end = 0.0, step = 0.0;
-    double x = 0.0, y = 0.0;
-    double denominator = 0.0;
-
     // Ввод параметров табуляции
-    x_start = getValue("Введите начало интервала (x_нач): ");
-    x_end   = getValue("Введите конец интервала (x_кон): ");
-    step    = getValue("Введите шаг табуляции (dx): ");
+    double x_start = getValue("Введите начало интервала (x_нач): ");
+    double x_end   = getValue("Введите конец интервала (x_кон): ");
+    double step    = getValue("Введите шаг табуляции (dx): ");
 
     // Проверка корректности ввода
-    if (step <= 0.0) 
+    if (step <= 0.0)
     {
         printf("Ошибка: шаг должен быть положительным числом.\n");
         return 1;
     }
-    if (x_start > x_end) 
+    if (x_start > x_end)
     {
         printf("Ошибка: начало интервала не может быть больше конца.\n");
         return 1;
@@ -47,22 +45,20 @@ int main()
     printf("--------------------\n");
 
     // Цикл табуляции
-    x = x_start;
-    while (x <= x_end) 
+    for (double x = x_start; x <= x_end; x += step)
     {
-        denominator = 3.0 + sin(3.6 * x);
+        double denominator = 3.0 + sin(3.6 * x);
 
         // Проверка знаменателя на ноль (по заданию)
-        if (denominator == 0.0) 
+        if (fabs(denominator) < EPS)
         {
             printf("%10.4f   нет решения\n", x);
-        } else 
+        }
+        else
         {
-            y = computeY(x);
+            double y = computeY(x);
             printf("%10.4f   %10.4f\n", x, y);
         }
-
-        x = x + step;
     }
 
     return 0;
@@ -77,12 +73,33 @@ double computeY(const double x)
 }
 
 /**
- * @brief считывание значения с клавиатуры
+ * @brief считывание значения с клавиатуры с проверкой ввода
  */
 double getValue(const char* prompt)
 {
+    // Проверка, что пришёл непустой указатель
+    if (prompt == NULL)
+    {
+        printf("Ошибка: некорректное сообщение (NULL-указатель).\n");
+        return 0.0;
+    }
+
     double value = 0.0;
     printf("%s", prompt);
-    scanf("%lf", &value);
+
+    // Проверка ввода: повторяем, пока не будет введено корректное число
+    while (scanf("%lf", &value) != 1)
+    {
+        printf("Некорректный ввод, ожидалось число.\n");
+
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF)
+        {
+            /* очищаем буфер до конца строки */
+        }
+
+        printf("%s", prompt);
+    }
+
     return value;
 }
