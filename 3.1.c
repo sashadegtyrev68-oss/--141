@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <math.h>
-
-#define EPS 1e-6
+#include <float.h> 
 
 /**
  * @brief вычисляет значение функции y = x - 1/(3 + sin(3.6*x))
@@ -18,39 +17,52 @@ double computeY(const double x);
 double getValue(const char* prompt);
 
 /**
+ * @brief проверяет корректность шага табуляции
+ * @return 1, если шаг положительный, иначе 0
+ */
+int isStepValid(const double step);
+
+/**
+ * @brief проверяет корректность границ интервала
+ * @return 1, если начало не больше конца, иначе 0
+ */
+int isIntervalValid(const double x_start, const double x_end);
+
+/**
  * @brief точка входа в программу
  * @return 0, если программа выполнена корректно
  */
 int main(void)
 {
-    // Ввод параметров табуляции
     double x_start = getValue("Введите начало интервала (x_нач): ");
     double x_end   = getValue("Введите конец интервала (x_кон): ");
     double step    = getValue("Введите шаг табуляции (dx): ");
 
-    // Проверка корректности ввода
-    if (step <= 0.0)
+    if (!isStepValid(step))
     {
         printf("Ошибка: шаг должен быть положительным числом.\n");
         return 1;
     }
-    if (x_start > x_end)
+
+    if (!isIntervalValid(x_start, x_end))
     {
         printf("Ошибка: начало интервала не может быть больше конца.\n");
         return 1;
     }
 
-    // Вывод заголовка таблицы
     printf("\n      x            y\n");
     printf("--------------------\n");
 
-    // Цикл табуляции
-    for (double x = x_start; x <= x_end; x += step)
+    /* Число шагов считаем один раз, а x вычисляем умножением i*step */
+    int steps_count = (int)round((x_end - x_start) / step);
+
+    for (int i = 0; i <= steps_count; ++i)
     {
+        double x = x_start + i * step;
         double denominator = 3.0 + sin(3.6 * x);
 
-        // Проверка знаменателя на ноль (по заданию)
-        if (fabs(denominator) < EPS)
+        /* Встроенная константа */
+        if (fabs(denominator) < DBL_EPSILON)
         {
             printf("%10.4f   нет решения\n", x);
         }
@@ -73,32 +85,42 @@ double computeY(const double x)
 }
 
 /**
- * @brief считывание значения с клавиатуры с проверкой ввода
+ * @brief проверка шага
+ */
+int isStepValid(const double step)
+{
+    return step > 0.0;
+}
+
+/**
+ * @brief проверка границ интервала
+ */
+int isIntervalValid(const double x_start, const double x_end)
+{
+    return x_start <= x_end;
+}
+
+/**
+ * @brief считывание значения с клавиатуры 
  */
 double getValue(const char* prompt)
 {
-    // Проверка, что пришёл непустой указатель
+    double value = 0.0;
+    int scanned = 0;
+
     if (prompt == NULL)
     {
         printf("Ошибка: некорректное сообщение (NULL-указатель).\n");
         return 0.0;
     }
 
-    double value = 0.0;
     printf("%s", prompt);
 
-    // Проверка ввода: повторяем, пока не будет введено корректное число
-    while (scanf("%lf", &value) != 1)
+    
+    scanned = scanf("%lf", &value);
+    if (scanned != 1)
     {
         printf("Некорректный ввод, ожидалось число.\n");
-
-        int ch;
-        while ((ch = getchar()) != '\n' && ch != EOF)
-        {
-            /* очищаем буфер до конца строки */
-        }
-
-        printf("%s", prompt);
     }
 
     return value;
