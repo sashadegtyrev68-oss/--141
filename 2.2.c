@@ -3,7 +3,7 @@
 
 /** ==================== Именованные константы ==================== */
 #define PROMPT_X             "Введите значение x: "
-#define MSG_INVALID_NUM      "Ошибка: ввод должен быть числом. Попробуйте снова.\n"
+#define MSG_INVALID_NUM      "Ошибка: ввод должен быть числом.\n"
 #define MSG_DIV_BY_ZERO      "Ошибка: при x < 4 деление на ноль невозможно.\n"
 #define MSG_RESULT_HEADER    "\n--- Результат ---\n"
 #define MSG_XA               "При x = %lf и a = %lf\n"
@@ -31,7 +31,7 @@ double getValue(const char* prompt);
  */
 int main(void)
 {
-    const double A = 2.1; 
+    const double A = 2.1;
     double x = 0.0;
     double y = 0.0;
 
@@ -82,7 +82,7 @@ double getValue(const char* prompt)
 {
     double value = 0.0;
     int scanned = 0;
-    int c;
+    int c = 0; 
 
     /* printf("%s", NULL) — UB, поэтому печатаем только если prompt != NULL. */
     if (prompt != NULL)
@@ -90,19 +90,16 @@ double getValue(const char* prompt)
         printf("%s", prompt);
     }
 
-    do
+    scanned = scanf("%lf", &value);
+    if (scanned != 1)
     {
-        scanned = scanf("%lf", &value);
-        if (scanned != 1)
+        printf(MSG_INVALID_NUM);
+        /* чистим буфер до конца строки */
+        while ((c = getchar()) != '\n' && c != EOF)
         {
-            printf(MSG_INVALID_NUM);
-            /* чистим буфер до конца строки, чтобы мусор не зациклил ввод */
-            while ((c = getchar()) != '\n' && c != EOF)
-            {
-                /* пустое тело: читаем и выбрасываем */
-            }
+            /* пустое тело: читаем и выбрасываем */
         }
-    } while (scanned != 1);
+    }
 
     return value;
 }
