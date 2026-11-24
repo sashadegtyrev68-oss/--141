@@ -9,42 +9,36 @@
 double getValue(const char* prompt);
 
 /**
+ * @brief проверяет корректность точности
+ * @return 1, если e положительное, иначе 0
+ */
+int isPrecisionValid(const double e);
+
+/**
  * @brief точка входа в программу
  * @return 0, если программа выполнена корректно
  */
 int main(void)
 {
-    double e = 0.0;
-    double sum = 0.0;
-    double factorial = 1.0;
-    double sign = 1.0;
-    int k = 0;
-    int count = 0;
+    double e = getValue("Введите точность e: ");
 
-    e = getValue("Введите точность e: ");
-
-    if (e <= 0.0)
+    if (!isPrecisionValid(e))
     {
         printf("Ошибка: e должно быть положительным числом.\n");
         return 1;
     }
 
-    while (1)
+    double sum = 0.0;
+    double term = -1.0;  /* a_1 = (-1)^1 * 1/1! = -1; член a_0 = 0 сумму не меняет */
+    int k = 1;
+    int count = 0;
+
+
+    while (fabs(term) >= e)
     {
-        double term = (sign / factorial) * k;
-
-        // Первый член (k=0) всегда добавляем, дальше проверяем условие
-        if (count > 0 && fabs(term) < e)
-        {
-            break;
-        }
-
         sum += term;
         count++;
-
-        // Рекуррентное выражение для факториала
-        factorial *= (k + 1);
-        sign *= -1.0;
+        term = -term / k;
         k++;
     }
 
@@ -56,25 +50,33 @@ int main(void)
 }
 
 /**
- * @brief считывание значения с клавиатуры с проверкой ввода
+ * @brief проверка e
+ */
+int isPrecisionValid(const double e)
+{
+    return e > 0.0;
+}
+
+/**
+ * @brief считывание значения с клавиатуры
  */
 double getValue(const char* prompt)
 {
+    double value = 0.0;
+    int scanned = 0;
+
     if (prompt == NULL)
     {
         printf("Ошибка: некорректное сообщение (NULL-указатель).\n");
         return 0.0;
     }
 
-    double value = 0.0;
     printf("%s", prompt);
 
-    while (scanf("%lf", &value) != 1)
+    scanned = scanf("%lf", &value);
+    if (scanned != 1)
     {
         printf("Некорректный ввод, ожидалось число.\n");
-        int ch;
-        while ((ch = getchar()) != '\n' && ch != EOF) {}
-        printf("%s", prompt);
     }
 
     return value;
